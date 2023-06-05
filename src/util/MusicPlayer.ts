@@ -17,7 +17,7 @@
 */
 
 import { joinVoiceChannel, VoiceConnection, AudioPlayer, createAudioPlayer, NoSubscriberBehavior, getVoiceConnection, AudioResource, AudioPlayerStatus } from '@discordjs/voice';
-import { Collection, Guild, Message, TextBasedChannel, TextChannel, VoiceBasedChannel } from 'discord.js';
+import { Collection, Guild, TextBasedChannel, VoiceBasedChannel } from 'discord.js';
 import { MusicResource } from './MusicResource';
 import { FunctionResult } from '../types/FunctionResult';
 import { SpotifyPlaylist, SpotifyTrack, is_expired, refreshToken, search, spotify, validate } from 'play-dl';
@@ -138,11 +138,8 @@ export class MusicPlayer {
                 break;
             case "sp_track":
                 const sp_track_info = await spotify(query) as SpotifyTrack;
-                console.log("test1");
                 if (sp_track_info === null) return { statusCode: 1, statusString: "I couldn't find your query!" };
-                console.log("test2");
                 const sp_yt_search = await search(`${sp_track_info.artists[0].name} - ${sp_track_info.name}`, {limit: 1});
-                console.log("test3");
                 if (sp_yt_search.length < 1) return { statusCode: 1, statusString: "I couldn't find your query!" };
                 toQueue.push(
                     new MusicResource(sp_yt_search[0].title!,sp_yt_search[0].durationInSec,sp_yt_search[0].url,false)
