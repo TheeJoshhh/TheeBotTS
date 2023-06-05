@@ -82,6 +82,19 @@ export class MusicResource {
     }
 
 
+    /**
+     * Add a vote to skip this song.
+     * @param id The discord user id of the user voting to skip.
+     */
+    public addVote(id: string): void { this.votes.add(id); }
+
+    /**
+     * Remove a vote to skip this song.
+     * @param id The discord user id of the user being removed from the voters.
+     */
+    public removeVote(id: string): void { this.votes.delete(id); }
+
+
     // GETTERS AND SETTERS
     /**
      * @returns The title of this song.
@@ -94,14 +107,10 @@ export class MusicResource {
     public isPlaceholder(): boolean { return this.placeholder; }
 
     /**
-     * Add a vote to skip this song.
-     * @param id The discord user id of the user voting to skip.
+     * @returns A set of votes to skip this song.
      */
-    public addVote(id: string): void { this.votes.add(id); }
+    public getVotes(): Set<string> {
+        return this.votes;
+    }
 
-    /**
-     * Remove a vote to skip this song.
-     * @param id The discord user id of the user being removed from the voters.
-     */
-    public removeVote(id: string): void { this.votes.delete(id); }
 }

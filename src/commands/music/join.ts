@@ -30,7 +30,7 @@ module.exports = {
     userCooldown: 3,
     guildCooldown: 0,
     async execute(client: ExtendedClient, interaction: Interaction) {
-        // Make sure the command is a chat imput command and was send in a guild.
+        // Make sure the command is a chat input command and was send in a guild.
         if (!interaction.isChatInputCommand()) return;
         if (!interaction.inGuild()) return;
 

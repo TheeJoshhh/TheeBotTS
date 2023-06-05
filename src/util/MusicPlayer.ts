@@ -138,8 +138,11 @@ export class MusicPlayer {
                 break;
             case "sp_track":
                 const sp_track_info = await spotify(query) as SpotifyTrack;
+                console.log("test1");
                 if (sp_track_info === null) return { statusCode: 1, statusString: "I couldn't find your query!" };
+                console.log("test2");
                 const sp_yt_search = await search(`${sp_track_info.artists[0].name} - ${sp_track_info.name}`, {limit: 1});
+                console.log("test3");
                 if (sp_yt_search.length < 1) return { statusCode: 1, statusString: "I couldn't find your query!" };
                 toQueue.push(
                     new MusicResource(sp_yt_search[0].title!,sp_yt_search[0].durationInSec,sp_yt_search[0].url,false)
@@ -217,13 +220,31 @@ export class MusicPlayer {
         return true;
     }
 
+
     /**
-     * If the connection or player don't exist, create them.
+     * Register a users vote to skip the current song.
+     * @param id The user ID of the user voting to skip.
+     * @returns A FunctionResult returning information about the result of this function.
      */
-    private fix(): void {
-        if (this.getConnection() == null) this.connect(this.voice_channel);
-        if (!this.player) this.player = this.createPlayer();
+    public voteSkip(id:string): FunctionResult {
+        if (this.waiting === true || this.queue.length < 1) return { statusCode: 1, statusString: "I'm not playing anything!" };
+        const reqVotes:number = Math.round(
+            (this.voice_channel.members.filter(m=>!m.user.bot).size)/2
+        );
+        this.queue[0].addVote(id)
+        const validVotes = this.voice_channel.members
+            .filter(mem=>this.queue[0].getVotes().has(mem.id))
+            .map(mem=>mem.id);
+        if (validVotes.length >= reqVotes) {
+            this.player.stop();
+            this.queue.shift();
+            this.playNext();
+            return { statusCode: 0, statusString: "Skipping..." };
+        } else {
+            return { statusCode: 0, statusString: "Your vote to skip has been registered." };
+        }
     }
+
 
     /**
      * Destroy everything and delete this MusicPlayer.
