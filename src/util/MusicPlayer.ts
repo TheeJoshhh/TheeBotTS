@@ -124,7 +124,7 @@ export class MusicPlayer {
 
         // Make sure spotify token doesn't need a referesh.
         if (is_expired()) console.log("expired")
-        if (is_expired()) refreshToken();
+        if (is_expired()) await refreshToken();
 
         // Retrieve the required data from youtube, spotify etc...
         switch(type) {
@@ -251,5 +251,13 @@ export class MusicPlayer {
         const connection = this.getConnection(); // Get the connection (if any).
         if (connection) connection.destroy(); // If there's a connection, destroy it.
         if (music.has(this.guild.id)) music.delete(this.guild.id); // Delete this MusicPlayer.
+    }
+
+
+    /**
+     * @returns The current music queue.
+     */
+    public getQueue(): Array<MusicResource> {
+        return this.queue;
     }
 }
