@@ -26,10 +26,14 @@ export class MusicResource {
     private duration: number;
     private url: string;
 
+    // Used to prevent API spam, if a large playlist is queued it will only create placeholders
+    // for the songs which are then used to search for the song on youtube later on.
     private placeholder:boolean;
 
+    // The votes to skip this song.
     private votes: Set<string> = new Set();
     
+    // The discord AudioResource for this song.
     private resource: AudioResource | null = null;
 
     constructor(title: string, duration: number = 0, url: string = "", placeholder:boolean = true) {
@@ -40,7 +44,10 @@ export class MusicResource {
     }
 
 
-    // Get information about the song.
+   /**
+    * Make sure the song has been found on youtube and it's details are saved.
+    * @returns True if this was successful, false otherwise.
+    */
     private async getData(): Promise<boolean> {
         if (!this.placeholder) return true;
         const yt_search = await search(this.title, {limit: 1});
@@ -52,12 +59,18 @@ export class MusicResource {
         return true;
     } 
 
-
+    /**
+     * @returns An AudioResource for this object.
+     */
     public getResource(): AudioResource {
         return this.resource!;
     }
 
-
+    /**
+     * Get this MusicResource in a state that is ready to play (e.g retrieve it from yt) 
+     * and create an AudioResource from said youtube data.
+     * @returns A FunctionResult representing whether or not the resource is ready to play.
+     */
     public async readyToPlay(): Promise<FunctionResult> {
         if (!await this.getData()) return { statusCode: 1, statusString: `I couldn't find \`${this.title}\` on youtube!` }
         const audioStream = await stream(this.url);
@@ -70,13 +83,25 @@ export class MusicResource {
 
 
     // GETTERS AND SETTERS
-    // The title of the song.
+    /**
+     * @returns The title of this song.
+     */
     public getTitle(): string { return this.title; }
     
-    // If this object is a placeholder for a song that will be queried later on.
+    /**
+     * @returns True if this object is a placeholder for a song that will be queried later on.
+     */
     public isPlaceholder(): boolean { return this.placeholder; }
 
-    // Add and remove votes to skip.
+    /**
+     * Add a vote to skip this song.
+     * @param id The discord user id of the user voting to skip.
+     */
     public addVote(id: string): void { this.votes.add(id); }
+
+    /**
+     * Remove a vote to skip this song.
+     * @param id The discord user id of the user being removed from the voters.
+     */
     public removeVote(id: string): void { this.votes.delete(id); }
 }
