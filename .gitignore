@@ -1,3 +1,7 @@
 config.json
+nodemon.json
+.eslintrc.json
+
 node_modules
 build
+.data
