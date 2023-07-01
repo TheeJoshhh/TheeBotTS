@@ -234,8 +234,6 @@ export class MusicPlayer {
             .map(mem=>mem.id);
         if (validVotes.length >= reqVotes) {
             this.player.stop();
-            this.queue.shift();
-            this.playNext();
             return { statusCode: 0, statusString: "Skipping..." };
         } else {
             return { statusCode: 0, statusString: "Your vote to skip has been registered." };
