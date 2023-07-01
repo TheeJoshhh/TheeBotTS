@@ -21,7 +21,7 @@ import { Client, Events, Collection, GatewayIntentBits } from 'discord.js';
 import { token } from './config.json';
 import { ExtendedClient } from './types/ExtendedClient'
 import { Command } from './types/Command';
-import { LoadCommands } from './util/CommandHandler';
+import { DeployGlobalCommands, LoadCommands } from './util/CommandHandler';
 import { Controller } from './util/Controller';
 const play = require('play-dl');
 
@@ -35,6 +35,7 @@ client.once(Events.ClientReady, c => {
     console.log(`TheeBotTS is online and ready!\nLogged in as ${c.user.tag}`);
     console.log(`Currently in ${client.guilds.cache.size} guilds!`);
     LoadCommands(client);
+    DeployGlobalCommands(client);
     Controller(client);
 });
 
