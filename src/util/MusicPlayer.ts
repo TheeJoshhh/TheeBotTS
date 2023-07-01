@@ -236,7 +236,7 @@ export class MusicPlayer {
             this.player.stop();
             return { statusCode: 0, statusString: "Skipping..." };
         } else {
-            return { statusCode: 0, statusString: "Your vote to skip has been registered." };
+            return { statusCode: 0, statusString: `Your vote to skip has been registered. (${validVotes.length}/${reqVotes})` };
         }
     }
 
