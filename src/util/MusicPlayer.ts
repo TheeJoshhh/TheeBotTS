@@ -16,7 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { joinVoiceChannel, VoiceConnection, AudioPlayer, createAudioPlayer, NoSubscriberBehavior, getVoiceConnection, AudioResource, AudioPlayerStatus } from '@discordjs/voice';
+import { joinVoiceChannel, VoiceConnection, AudioPlayer, createAudioPlayer, NoSubscriberBehavior, getVoiceConnection, AudioResource, AudioPlayerStatus, VoiceConnectionStatus } from '@discordjs/voice';
 import { Collection, Guild, TextBasedChannel, VoiceBasedChannel } from 'discord.js';
 import { MusicResource } from './MusicResource';
 import { FunctionResult } from '../types/FunctionResult';
@@ -65,6 +65,9 @@ export class MusicPlayer {
         });
         con.on('error', e=> {
             console.error(e);
+            this.destroy();
+        });
+        con.on(VoiceConnectionStatus.Disconnected, e => {
             this.destroy();
         });
         return con;
