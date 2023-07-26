@@ -31,19 +31,19 @@ const client = new Client({
 }) as ExtendedClient; // Allows extra data to be attached to the client.
 
 // Once the bot is online.
-client.once(Events.ClientReady, c => {
+client.once(Events.ClientReady, async c => {
     console.log(`TheeBotTS is online and ready!\nLogged in as ${c.user.tag}`);
     console.log(`Currently in ${client.guilds.cache.size} guilds!`);
-    LoadCommands(client);
-    DeployGlobalCommands(client);
-    Controller(client);
-    play.getFreeClientID().then((clientID: String) => {
+    await play.getFreeClientID().then((clientID: String) => {
         play.setToken({
           soundcloud : {
               client_id : clientID
           }
         });
     });
+    LoadCommands(client);
+    DeployGlobalCommands(client);
+    Controller(client);
 });
 
 client.on(Events.InteractionCreate, interaction => {
