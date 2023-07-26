@@ -37,6 +37,13 @@ client.once(Events.ClientReady, c => {
     LoadCommands(client);
     DeployGlobalCommands(client);
     Controller(client);
+    play.getFreeClientID().then((clientID: String) => {
+        play.setToken({
+          soundcloud : {
+              client_id : clientID
+          }
+        });
+    });
 });
 
 client.on(Events.InteractionCreate, interaction => {
