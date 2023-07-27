@@ -17,7 +17,7 @@
 */
 
 import { joinVoiceChannel, VoiceConnection, AudioPlayer, createAudioPlayer, NoSubscriberBehavior, getVoiceConnection, AudioResource, AudioPlayerStatus, VoiceConnectionStatus } from '@discordjs/voice';
-import { Collection, Guild, TextBasedChannel, VoiceBasedChannel } from 'discord.js';
+import { Collection, Guild, TextBasedChannel, VoiceBasedChannel, time } from 'discord.js';
 import { MusicResource } from './MusicResource';
 import { FunctionResult } from '../types/FunctionResult';
 import { SoundCloudTrack, SpotifyPlaylist, SpotifyTrack, is_expired, refreshToken, search, soundcloud, spotify, validate } from 'play-dl';
@@ -31,6 +31,7 @@ export class MusicPlayer {
     private player: AudioPlayer;
     private queue: MusicResource[] = [];
     private waiting: boolean = true;
+    private timeoutID: any;
 
     /**
      * Initialize the MusicPlayer object.
@@ -102,6 +103,10 @@ export class MusicPlayer {
      */
     public async playNext(): Promise<FunctionResult> {
         if (this.queue.length === 0) {
+            this.timeoutID = setTimeout(() => {
+                this.sendMessage("Disconnecting due to innactivity...");
+                this.destroy();
+            }, 180000);
             return {statusCode: 0, statusString: "There are no more songs in the queue!"};
         }
 
@@ -171,6 +176,9 @@ export class MusicPlayer {
             default:
                 return { statusCode: 1, statusString: "Your query type isn't supported!" };
         }
+
+        // Delete any auto disconnect timeouts.
+        if (this.timeoutID !== null) clearTimeout(this.timeoutID);
 
         // Add all the song(s) to the queue.
         this.queue = this.queue.concat(toQueue);
@@ -264,7 +272,7 @@ export class MusicPlayer {
     public destroy(): void {
         if (this.player) this.player.stop(); // If there's a player, stop it.
         const connection = this.getConnection(); // Get the connection (if any).
-        if (connection) connection.destroy(); // If there's a connection, destroy it.
+        connection?.destroy();
         if (music.has(this.guild.id)) music.delete(this.guild.id); // Delete this MusicPlayer.
     }
 
