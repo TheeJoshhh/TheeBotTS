@@ -75,7 +75,7 @@ module.exports = {
             return;
         } 
 
-        const res: FunctionResult = await mp!.addQueue(query);
+        const res: FunctionResult = await mp!.addQueue(query, member.id);
 
         interaction.editReply(res.statusString);
         

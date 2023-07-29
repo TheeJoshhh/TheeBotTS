@@ -1,0 +1,1 @@
+{"version":"1.2.2","name":"theebotts","dependencies":{"@discordjs/opus":{"version":"0.9.0"},"@discordjs/voice":{"version":"0.16.0"},"discord.js":{"version":"14.11.0"},"ffmpeg-static":{"version":"5.1.0"},"libsodium-wrappers":{"version":"0.7.11"},"play-dl":{"version":"1.9.6"},"prompts":{"version":"2.4.2"}}}

@@ -25,6 +25,7 @@ export class MusicResource {
     private title: string;
     private duration: number;
     private url: string;
+    private userId: string;
 
     // Used to prevent API spam, if a large playlist is queued it will only create placeholders
     // for the songs which are then used to search for the song on youtube later on.
@@ -36,11 +37,12 @@ export class MusicResource {
     // The discord AudioResource for this song.
     private resource: AudioResource | null = null;
 
-    constructor(title: string, duration: number = 0, url: string = "", placeholder:boolean = true) {
+    constructor(title: string, userId: string, duration: number = 0, url: string = "", placeholder:boolean = true) {
         this.title = title;
         this.duration = duration;
         this.url = url;
         this.placeholder = placeholder;
+        this.userId = userId;
     }
 
 
@@ -111,6 +113,10 @@ export class MusicResource {
      */
     public getVotes(): Set<string> {
         return this.votes;
+    }
+
+    public getUser(): string {
+        return this.userId;
     }
 
 }

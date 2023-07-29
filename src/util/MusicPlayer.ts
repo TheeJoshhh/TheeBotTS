@@ -126,7 +126,7 @@ export class MusicPlayer {
      
     }
 
-    public async addQueue(query: string): Promise<FunctionResult> {
+    public async addQueue(query: string, userId: string): Promise<FunctionResult> {
         // Determine the query type.
         const type = await validate(query);
 
@@ -146,7 +146,7 @@ export class MusicPlayer {
                 const yt_search = await search(query, {limit: 1});
                 if (yt_search.length < 1) return { statusCode: 1, statusString: "I couldn't find your query!" };
                 toQueue.push(
-                    new MusicResource(yt_search[0].title!,yt_search[0].durationInSec,yt_search[0].url,false)
+                    new MusicResource(yt_search[0].title!,userId,yt_search[0].durationInSec,yt_search[0].url,false)
                 );
                 break;
             case "sp_track":
@@ -156,21 +156,21 @@ export class MusicPlayer {
                 const sp_yt_search = await search(`${sp_track_info.artists[0].name} - ${sp_track_info.name}`, {limit: 1});
                 if (sp_yt_search.length < 1) return { statusCode: 1, statusString: "I couldn't find your query!" };
                 toQueue.push(
-                    new MusicResource(sp_yt_search[0].title!,sp_yt_search[0].durationInSec,sp_yt_search[0].url,false)
+                    new MusicResource(sp_yt_search[0].title!,userId,sp_yt_search[0].durationInSec,sp_yt_search[0].url,false)
                 );
                 break;
             case "sp_playlist":
                 return { statusCode: 1, statusString: "Sorry, spotify/youtube support is currently broken!" };
                 const sp_playlist_info = await spotify(query) as SpotifyPlaylist;
                 (await sp_playlist_info.all_tracks()).forEach(track=> {
-                    toQueue.push(new MusicResource(track.artists[0].name + " - " + track.name));
+                    toQueue.push(new MusicResource(track.artists[0].name + " - " + track.name, userId));
                 });
                 break;
             case "so_track":
                 const so_info = await soundcloud(query) as SoundCloudTrack;
                 if (!so_info) return { statusCode: 1, statusString: "I couldn't find your query!" };
                 toQueue.push(
-                    new MusicResource(so_info.name, so_info.durationInSec, so_info.permalink ,false)
+                    new MusicResource(so_info.name, userId, so_info.durationInSec, so_info.permalink ,false)
                 );
                 break;
             default:
@@ -253,6 +253,10 @@ export class MusicPlayer {
         const reqVotes:number = Math.round(
             (this.voice_channel.members.filter(m=>!m.user.bot).size)/2
         );
+        if (this.queue[0].getUser() == id) {
+            this.player.stop();
+            return { statusCode: 0, statusString: "Skipping..." };
+        }
         this.queue[0].addVote(id)
         const validVotes = this.voice_channel.members
             .filter(mem=>this.queue[0].getVotes().has(mem.id))
