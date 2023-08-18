@@ -142,7 +142,7 @@ export class MusicPlayer {
         switch(type) {
             case "search":
             case "yt_video":
-                return { statusCode: 1, statusString: "Sorry, youtube support is currently broken!" };
+                //return { statusCode: 1, statusString: "Sorry, youtube support is currently broken!" };
                 const yt_search = await search(query, {limit: 1});
                 if (yt_search.length < 1) return { statusCode: 1, statusString: "I couldn't find your query!" };
                 toQueue.push(
@@ -150,7 +150,7 @@ export class MusicPlayer {
                 );
                 break;
             case "sp_track":
-                return { statusCode: 1, statusString: "Sorry, spotify/youtube support is currently broken!" };
+                //return { statusCode: 1, statusString: "Sorry, spotify/youtube support is currently broken!" };
                 const sp_track_info = await spotify(query) as SpotifyTrack;
                 if (sp_track_info === null) return { statusCode: 1, statusString: "I couldn't find your query!" };
                 const sp_yt_search = await search(`${sp_track_info.artists[0].name} - ${sp_track_info.name}`, {limit: 1});
@@ -160,7 +160,7 @@ export class MusicPlayer {
                 );
                 break;
             case "sp_playlist":
-                return { statusCode: 1, statusString: "Sorry, spotify/youtube support is currently broken!" };
+                //return { statusCode: 1, statusString: "Sorry, spotify/youtube support is currently broken!" };
                 const sp_playlist_info = await spotify(query) as SpotifyPlaylist;
                 (await sp_playlist_info.all_tracks()).forEach(track=> {
                     toQueue.push(new MusicResource(track.artists[0].name + " - " + track.name, userId));
