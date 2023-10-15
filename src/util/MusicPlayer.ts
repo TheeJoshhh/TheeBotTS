@@ -31,6 +31,8 @@ export class MusicPlayer {
     private player: AudioPlayer;
     private queue: MusicResource[] = [];
     private waiting: boolean = true;
+    public repeat: boolean = false;
+    public loop: boolean = false;
     private timeoutID: any;
 
     /**
@@ -89,7 +91,14 @@ export class MusicPlayer {
         });
         player.on(AudioPlayerStatus.Idle, async () => { 
             this.waiting = true; 
-            this.queue.shift();
+
+            // Handle repeat/loop mode.
+            let shifted: MusicResource|undefined = undefined;
+            if (!this.repeat) shifted = this.queue.shift();
+            if (this.loop) {
+                if (shifted instanceof MusicResource) this.queue.push(shifted);
+            }
+            
             const res = await this.playNext();
             this.sendMessage(res.statusString);
         });
